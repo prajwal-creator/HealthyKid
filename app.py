@@ -4,13 +4,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
-import matplotlib.pyplot as plt
 #import lux
 import time
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-import seaborn as sns
+
 
 
 def BloodGroupTypes(data):
@@ -31,6 +30,8 @@ def data_cleaning(dataset):
     st.write("Dataset Size after removing err records {}".format(dataset.shape))
     errVAl= data[ data['Age in yrs'] == '#VALUE!' ].index
     dataset.drop(errVAl, inplace=True)
+    errVAl= data[ data['BMI']== '#VALUE!' ].index
+    dataset.drop(errVAl, inplace=True)
     st.write("Dataset Size after removing err value records {}".format(dataset.shape))    
     invalid_r= dataset[(dataset['Blood Group'].isnull()) & (dataset['Sex'].isnull())& (dataset['Height'].isnull())&(dataset['Weight'].isnull())& (dataset['BMI'].isnull())].index
     dataset.drop(invalid_r, inplace=True)
@@ -45,7 +46,7 @@ def data_conversion(dataset):
     data['Temperature'] = data['Temperature'].str.rstrip('F').apply(pd.to_numeric)
     data['Pulse'] = data['Pulse'].str.rstrip('per Min').apply(pd.to_numeric)
     data['BP'] = data['BP'].str.rstrip('mmHg')
-    
+    data['BMI'] = data['BMI'].apply(pd.to_numeric)
 
 def BP_manipulation(data):
     data.loc[(data['BP'].isnull()) & (data['Weight'].between(20,42,inclusive=True))& (data['Age in yrs'] <= 10),'BP']='96/117'
@@ -205,6 +206,14 @@ if not st.sidebar.checkbox("Hide", True,key=7):
     st.markdown("###  Dataframe representing overall recommendations")
     st.dataframe(count)
 
+#heatmap to show the correlation between age,bmi,height and weight
+st.sidebar.markdown("### Correlaion and Heatmaps ")
+if not st.sidebar.checkbox("Hide", True,key=8):
+    st.markdown("### Heatmap to show the correlation between age,bmi,height and weight")
+    bmi_correl = data[['Height','Weight','BMI','Age in yrs']].corr(method='pearson')
+    fig, ax = plt.subplots()
+    sns.heatmap(bmi_correl, ax=ax)
+    st.write(fig)
 
 #NULL BP values        
 #st.sidebar.markdown("### Replacing NULL BP values")
