@@ -207,13 +207,23 @@ if not st.sidebar.checkbox("Hide", True,key=7):
     st.dataframe(count)
 
 #heatmap to show the correlation between age,bmi,height and weight
-st.sidebar.markdown("### Correlaion and Heatmaps ")
+st.sidebar.markdown("### Correlation and Heatmaps ")
 if not st.sidebar.checkbox("Hide", True,key=8):
     st.markdown("### Heatmap to show the correlation between age,bmi,height and weight")
     bmi_correl = data[['Height','Weight','BMI','Age in yrs']].corr(method='pearson')
     fig, ax = plt.subplots()
     sns.heatmap(bmi_correl, ax=ax)
     st.write(fig)
+
+#Pairplots to show the correlation between age,bmi,height,temperature,Pulse and weight based on Sex
+#st.sidebar.markdown("### Correlation and Pairplots ")
+#if not st.sidebar.checkbox("Hide", True,key=9):
+#    st.markdown("### Pairplots to show the correlation between age,bmi,Pulse,temperature,height and weight based on Sex")
+#    fig = plt.figure()
+#    sns.pairplot(data,hue='Sex')
+#    st.pyplot(fig)
+
+
 
 #NULL BP values        
 #st.sidebar.markdown("### Replacing NULL BP values")
