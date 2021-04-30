@@ -9,7 +9,8 @@ import time
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-
+from plotly.offline import download_plotlyjs, init_notebook_mode, iplot
+from plotly.graph_objs import *
 
 
 def BloodGroupTypes(data):
@@ -84,7 +85,7 @@ def load_data(url):
     
 
 
-@st.cache(persist=True)
+@st.cache(persist=True,allow_output_mutation=True)
 def cache(data):
     return data
        
@@ -98,9 +99,9 @@ def load_exit():
 st.markdown("# HealthyKid")
 st.markdown("### Data Analysis")
 
-def data_upload():
+def data_upload(n):
     df = pd.DataFrame()
-    data_file = st.file_uploader("Upload CSV",type=['csv'])
+    data_file = st.file_uploader("Upload only CSV",type=['csv'],key=n)
     if data_file is not None:
         file_details = {"Filename":data_file.name,"FileType":data_file.type,"FileSize":data_file.size}
         st.write(file_details)
@@ -108,10 +109,113 @@ def data_upload():
         st.dataframe(df)
     return df
 
+def bp_con(cols):
+    age=cols[0]
+    sex=cols[1]
+    sys=cols[2]
+    dia=cols[3] if cols[3]!='' else 0
+    if sys==0 or dia==0:
+        return "NA"
+    sys=int(sys)
+    dia=int(dia)
+    x1=bp_data[(bp_data['Gender']==sex) & (bp_data['Years']==age)]['Systolic']
+    x2=bp_data[(bp_data['Gender']==sex) & (bp_data['Years']==age)]['Diastolic']
+    x1 = int(''.join(map(str, x1)) if ''.join(map(str, x1))!='' else 0 )
+    x2 = int(''.join(map(str, x2)) if ''.join(map(str, x2))!='' else 0)
+
+    if (sys<=x1 and sys>(x1-10)) and (dia<=x2 and dia>(x2-5)):
+        return "Normal"
+    elif(sys<(x1-10) or dia<(x2-5)):
+        return "Subnormal"
+    elif(sys>x1 or dia>x2):
+        return "Abnormal"
+    else:
+        return "NA"
+
+def toint(data):
+    return int(data[0])
+
+def height_con(cols):
+    age=cols[0]
+    sex=cols[1]
+    height=float(cols[2])
+   
+    h1=data2[(data2['Gender']==sex) & (data2['Age']==age)]['H1']
+    h2=data2[(data2['Gender']==sex) & (data2['Age']==age)]['H2']
+    h3=data2[(data2['Gender']==sex) & (data2['Age']==age)]['H3']
+    h1 = float(''.join(map(str, h1)) if ''.join(map(str, h1))!='' else 0 )
+    h2 = float(''.join(map(str, h2)) if ''.join(map(str, h2))!='' else 0 )
+    h3 = float(''.join(map(str, h3)) if ''.join(map(str, h3))!='' else 0 )
+    
+    if (height<=h1):
+        return "Stunted"
+    elif(height>h1 and height<h2):
+        return "Borderline"
+    elif(height>h2 and height<h3):
+        return "Normal"
+    elif(height>h3):
+        return "Over-height"
+    else:
+        return "NA"
+
+
+def weight_con(cols):
+    age=cols[0]
+    sex=cols[1]
+    weight=cols[2]
+   
+    w1=data3[(data3['Gender']==sex) & (data3['Age']==age)]['W1']
+    w2=data3[(data3['Gender']==sex) & (data3['Age']==age)]['W2']
+    w3=data3[(data3['Gender']==sex) & (data3['Age']==age)]['W3']
+    w1 = float(''.join(map(str, w1)) if ''.join(map(str, w1))!='' else 0 )
+    w2 = float(''.join(map(str, w2)) if ''.join(map(str, w2))!='' else 0 )
+    w3 = float(''.join(map(str, w3)) if ''.join(map(str, w3))!='' else 0 )
+    
+    if (weight<=w1):
+        return "Under-weight"
+    elif(weight>w1 and weight<w2):
+        return "Borderline"
+    elif(weight>w2 and weight<w3):
+        return "Normal"
+    elif(weight>w3):
+        return "Over-weight"
+    else:
+        return "NA"
+
+
+def bmi_con(cols):
+    age=cols[0]
+    sex=cols[1]
+    BMI=cols[2]
+   
+    b1=data4[(data4['Gender']==sex) & (data4['Age']==age)]['Bmi1']
+    b2=data4[(data4['Gender']==sex) & (data4['Age']==age)]['Bmi2']
+    b3=data4[(data4['Gender']==sex) & (data4['Age']==age)]['Bmi3']
+    b4=data4[(data4['Gender']==sex) & (data4['Age']==age)]['Bmi4']
+    b1 = float(''.join(map(str, b1)) if ''.join(map(str, b1))!='' else 0 )
+    b2 = float(''.join(map(str, b2)) if ''.join(map(str, b2))!='' else 0 )
+    b3 = float(''.join(map(str, b3)) if ''.join(map(str, b3))!='' else 0 )
+    b4 = float(''.join(map(str, b4)) if ''.join(map(str, b4))!='' else 0 ) 
+    
+    if (BMI<=b1):
+        return "Under-weight"
+    elif(BMI>b1 and BMI<b2):
+        return "Borderline"
+    elif(BMI>b2 and BMI<b3):
+        return "Normal"
+    elif(BMI>b3 and BMI<b4):
+        return "Over-weight"
+    elif(BMI>b4):
+        return "Obese"
+    else:
+        return "NA"
+
+
 st.markdown("Data Loading")
 my_bar = st.progress(0)
 load_start()
-data = data_upload()
+st.markdown("Enter the main dataset")
+data = data_upload(1)
 load_exit()
 st.markdown("Data Cleaning")
 my_bar = st.progress(0)
@@ -207,23 +311,76 @@ if not st.sidebar.checkbox("Hide", True,key=7):
     st.dataframe(count)
 
 #heatmap to show the correlation between age,bmi,height and weight
-st.sidebar.markdown("### Correlation and Heatmaps ")
-if not st.sidebar.checkbox("Hide", True,key=8):
+st.sidebar.markdown("### correlation and heatmaps")
+if not st.sidebar.checkbox("Hide",True,key=8):
     st.markdown("### Heatmap to show the correlation between age,bmi,height and weight")
     bmi_correl = data[['Height','Weight','BMI','Age in yrs']].corr(method='pearson')
-    fig, ax = plt.subplots()
-    sns.heatmap(bmi_correl, ax=ax)
-    st.write(fig)
+    xdf=['Height','Weight','BMI','Age in yrs']
+    ydf=['Age in yrs','BMI','Weight','Height']
+    zdf = np.array(bmi_correl)
+    trace = go.Heatmap(x=xdf,y=ydf,z=zdf,type='heatmap',colorscale='GnBu')
+    data1 = [trace]
+    fig=go.Figure(data=data1)
+    st.plotly_chart(fig)
+
+
 
 #Pairplots to show the correlation between age,bmi,height,temperature,Pulse and weight based on Sex
-#st.sidebar.markdown("### Correlation and Pairplots ")
-#if not st.sidebar.checkbox("Hide", True,key=9):
-#    st.markdown("### Pairplots to show the correlation between age,bmi,Pulse,temperature,height and weight based on Sex")
-#    fig = plt.figure()
-#    sns.pairplot(data,hue='Sex')
-#    st.pyplot(fig)
+st.sidebar.markdown("### Correlation and Pairplots ")
+if not st.sidebar.checkbox("Hide", True,key=9):
+    st.markdown("### Pairplots to show the correlation between age,bmi,Pulse,temperature,height and weight based on Sex")
+    fig = px.scatter_matrix(data,
+    dimensions=['LEP0', 'LEP1', 'REP0', 'REP1', 'LEPG0',
+       'LEPG1', 'REPG0', 'REPG1'],
+    color="Sex")
+    st.plotly_chart(fig)
 
+st.sidebar.markdown("### Enter the BP dataset ")
+if not st.sidebar.checkbox("Hide", True,key=10):
+    st.markdown("Upload BP Condition Dataset")
+    bp_data=data_upload(5)
+    data['systolic'] = data['systolic'].replace('0', np.nan)
+    data['diastolic']=data['diastolic'].replace('0',np.nan)
+    data[['systolic', 'diastolic']] = data[['systolic','diastolic']].fillna(value=0)
+    data['systolic'] = pd.to_numeric(data['systolic'], errors='coerce')
+    data['diastolic'] = pd.to_numeric(data['diastolic'], errors='coerce')
+    data['systolic'] = data['systolic'].astype(int)
+    data['diastolic']=data['diastolic'].astype(int)
+    data['bp_condition']=data[['Age in yrs','Sex','systolic','diastolic']].apply(bp_con,axis=1)
+    st.dataframe(data[['UHID','Sex','Age in yrs','BP','bp_condition']])
+    st.markdown("### Histogram based on bp ranges ")
+    fig=px.histogram(data, x='bp_condition', color='Sex', barmode='group')
+    st.plotly_chart(fig)
 
+st.sidebar.markdown("### Enter Height Condition dataset ")
+if not st.sidebar.checkbox("Hide", True,key=11):
+    st.markdown("Upload Height Condition Dataset")
+    data2 = data_upload(2)
+    data['height_condition']=data[['Age in yrs','Sex','Height']].apply(height_con,axis=1)
+    st.dataframe(data[['UHID','Sex','Age in yrs','Height','height_condition']])
+    st.markdown("### Histogram based on Height ")
+    fig=px.histogram(data, x='height_condition', color='Sex', barmode='group')
+    st.plotly_chart(fig)
+
+st.sidebar.markdown("### Enter Weight Condition dataset ")
+if not st.sidebar.checkbox("Hide", True,key=12):
+    st.markdown("Upload Weight Condition Dataset")
+    data3 = data_upload(3)
+    data['weight_condition']=data[['Age in yrs','Sex','Weight']].apply(weight_con,axis=1)
+    st.dataframe(data[['UHID','Sex','Age in yrs','Weight','weight_condition']])
+    st.markdown("### Histogram based on weight ")
+    fig=px.histogram(data, x='weight_condition', color='Sex', barmode='group')
+    st.plotly_chart(fig)
+
+st.sidebar.markdown("### Enter BMI Condition dataset ")
+if not st.sidebar.checkbox("Hide", True,key=13):
+    st.markdown("Upload BMI Condition Dataset")
+    data4 = data_upload(4)
+    data['bmi_condition']=data[['Age in yrs','Sex','BMI']].apply(bmi_con,axis=1)
+    st.dataframe(data[['UHID','Sex','Age in yrs','BMI','bmi_condition']])
+    st.markdown("### Histogram based on BMI ")
+    fig=px.histogram(data, x='bmi_condition', color='Sex', barmode='group')
+    st.plotly_chart(fig)
 
 #NULL BP values        
 #st.sidebar.markdown("### Replacing NULL BP values")
