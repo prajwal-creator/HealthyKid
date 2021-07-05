@@ -298,7 +298,7 @@ try:
     st.dataframe(data)
 except:
     st.markdown("----------------------------------------")
-    st.markdown("### PLEASE ENTER THE REQUIRED DATA")
+    st.markdown("### Thank you for using our App")
     st.markdown("----------------------------------------")
 
 
@@ -346,30 +346,54 @@ if not st.sidebar.checkbox("Hide", True,key=3):
 #Count plots for Teeth related Issues
 st.sidebar.markdown("###  General Count plots for Teeth related Issues ")
 if not st.sidebar.checkbox("Hide", True,key=4):
+    selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='58')
     select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Age in yrs'],key='8')
     select = st.sidebar.selectbox('Visualization based on', ['Caries','Discoloration','Healthy_Gums','Malocclusion','Oral_Hygine','TeethWellFormed','Serious_Dental_Issue','Dentist_Recommendation'], key='3')
+    school_count = data[select].value_counts()
+    school_count = pd.DataFrame({select:school_count.index, 'Number of Students':school_count.values})
     m_data = data.fillna('NA')
-    st.markdown("###  General Count plots for Teeth related Issues ")
-    fig=px.histogram(m_data, x=select1, color=select, barmode='group')
-    st.plotly_chart(fig)
+    if selectm == 'Bar plot':
+        st.markdown("###  General Count plots for Teeth related Issues ")
+        fig=px.histogram(m_data, x=select1, color=select, barmode='group')
+        st.plotly_chart(fig)
+    else:
+        fig = px.pie(school_count, values='Number of Students', names=select )
+        st.plotly_chart(fig)
+
 
 #Count plots for ENT related Issues
 st.sidebar.markdown("###  General Count plots for ENT related Issues  ")
 if not st.sidebar.checkbox("Hide", True,key=5):
+    selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='59')
     select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Age in yrs'],key='9')
     select = st.sidebar.selectbox('Visualization based on', ['LEFT_EAR','RIGHT_EAR','ENT_Issue','Eye_Issue','ENT_Issue_Detail','Eye_Issue_Detail','Wears_Glass'], key='4')
-    st.markdown("###  General Count plots for ENT related Issues ")
-    fig=px.histogram(m_data, x=select1, color=select, barmode='group')
-    st.plotly_chart(fig)
+    school_count = data[select].value_counts()
+    school_count = pd.DataFrame({select:school_count.index, 'Number of Students':school_count.values})
+    m_data = data.fillna('NA')
+    if selectm == 'Bar plot':
+        st.markdown("###  General Count plots for ENT related Issues ")
+        fig=px.histogram(m_data, x=select1, color=select, barmode='group')
+        st.plotly_chart(fig)
+    else:
+        fig = px.pie(school_count, values='Number of Students', names=select )
+        st.plotly_chart(fig)    
 
 #Count plots for eye acuity
 st.sidebar.markdown("###  General Count plots for acuity ")
 if not st.sidebar.checkbox("Hide", True,key=6):
+    selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='60')
     select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Sex'],key='5')
     select = st.sidebar.selectbox('Visualization based on', ['Left_Eye_Power','Right_Eye_Power','Left_Eye_Pwr_WthGlass','Right_Eye_Pwr_WthGlass'], key='6')
-    st.markdown("###  General Count plots for acuity")
-    fig=px.histogram(m_data, x=select1, color=select, barmode='group')
-    st.plotly_chart(fig)
+    school_count = data[select].value_counts()
+    school_count = pd.DataFrame({select:school_count.index, 'Number of Students':school_count.values})
+    m_data = data.fillna('NA')
+    if selectm == 'Bar plot':
+        st.markdown("###  General Count plots for acuity")
+        fig=px.histogram(m_data, x=select1, color=select, barmode='group')
+        st.plotly_chart(fig)
+    else:
+        fig = px.pie(school_count, values='Number of Students', names=select )
+        st.plotly_chart(fig)   
 
 st.sidebar.markdown("-----------------------------------------------")
 
@@ -409,7 +433,7 @@ if not st.sidebar.checkbox("Hide", True,key=9):
 st.sidebar.markdown("-----------------------------------------------")
 
 
-st.sidebar.markdown("### Enter the different condition datasets ")    
+st.sidebar.markdown("### Enter the different conditioned datasets ")    
 st.sidebar.markdown("### Upload the BP Condition dataset ")
 if not st.sidebar.checkbox("Hide", True,key=10):
     select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID','height_condition','weight_condition', 'bmi_condition'], key='14')
@@ -466,73 +490,106 @@ if not st.sidebar.checkbox("Hide", True,key=13):
 st.sidebar.markdown("-----------------------------------------------")
 
 
-
+st.sidebar.markdown("### Data showing Students Details with Major,Minor and Normal Probelms ")  
 st.sidebar.markdown("###  Details regarding Eye Condition")
 if not st.sidebar.checkbox("Hide", True,key=18):
-    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='19')
+    selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='61')
     data[['Right_Eye_Power','Left_Eye_Power']] = data[['Right_Eye_Power','Left_Eye_Power']].fillna(value=0)
     data['eye_condition']=data[['Right_Eye_Power','Left_Eye_Power']].apply(eye_con,axis=1)
-    st.markdown("### Histogram based on Eye Condition")
-    fig=px.histogram(data, x=select, color='eye_condition', barmode='group')
-    st.plotly_chart(fig)
-    st.sidebar.markdown("###  Details regarding Eye Condition for specific School")
-    if not st.sidebar.checkbox("Hide", True,key=26):
-        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='27')
-        select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='28')
-        st.markdown("### Details regarding Eye condition with respect to specific data")
-        d1=data[data[' School ID']==select1]
-        fig=px.histogram(d1,x=select, color='eye_condition', barmode='group')
+    school_count = data['eye_condition'].value_counts()
+    school_count = pd.DataFrame({'eye_condition':school_count.index, 'Number of Students':school_count.values})
+    if selectm == 'Bar plot':
+        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='19')
+        st.markdown("### Histogram based on Eye Condition")
+        fig=px.histogram(data, x=select, color='eye_condition', barmode='group')
         st.plotly_chart(fig)
-
+        st.sidebar.markdown("###  Details regarding Eye Condition for specific School")
+        if not st.sidebar.checkbox("Hide", True,key=26):
+            select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='27')
+            select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='28')
+            st.markdown("### Details regarding Eye condition with respect to specific data")
+            d1=data[data[' School ID']==select1]
+            fig=px.histogram(d1,x=select, color='eye_condition', barmode='group')
+            st.plotly_chart(fig)
+    else:
+        fig = px.pie(school_count, values='Number of Students', names='eye_condition' )
+        st.plotly_chart(fig)
 
 st.sidebar.markdown("###  Details regarding Teeth Condition")
 if not st.sidebar.checkbox("Hide", True,key=20):
-    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='21')
+    selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='62')
     data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']] = data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']].fillna(value=0)
     data['Teeth_condition']=data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']].apply(teeth_con,axis=1)
-    st.markdown("### Histogram based on Teeth Condition")
-    fig=px.histogram(data, x=select, color='Teeth_condition', barmode='group')
-    st.plotly_chart(fig)
-    st.sidebar.markdown("###  Details regarding Teeth Condition for specific School")
-    if not st.sidebar.checkbox("Hide", True,key=29):
-        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='30')
-        select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='31')
-        st.markdown("### Details regarding Teeth condition with respect to specific data")
-        d2=data[data[' School ID']==select1]
-        fig=px.histogram(d2,x=select, color='Teeth_condition', barmode='group')
+    school_count = data['Teeth_condition'].value_counts()
+    school_count = pd.DataFrame({'Teeth_condition':school_count.index, 'Number of Students':school_count.values})
+    if selectm == 'Bar plot':
+        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='21')
+        st.markdown("### Histogram based on Teeth Condition")
+        fig=px.histogram(data, x=select, color='Teeth_condition', barmode='group')
+        st.plotly_chart(fig)
+        st.sidebar.markdown("###  Details regarding Teeth Condition for specific School")
+        if not st.sidebar.checkbox("Hide", True,key=29):
+            select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='30')
+            select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='31')
+            st.markdown("### Details regarding Teeth condition with respect to specific data")
+            d2=data[data[' School ID']==select1]
+            fig=px.histogram(d2,x=select, color='Teeth_condition', barmode='group')
+            st.plotly_chart(fig)
+    else:
+        fig = px.pie(school_count, values='Number of Students', names='Teeth_condition' )
         st.plotly_chart(fig)
 
 st.sidebar.markdown("###  Details regarding ENT Condition")
 if not st.sidebar.checkbox("Hide", True,key=22):
-    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='23')
+    selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='63')
     data[['ENT_Issue']] = data[['ENT_Issue']].fillna(value=0)
     data['ENT_condition']=data[['ENT_Issue']].apply(ent_con,axis=1)
-    st.markdown("### Histogram based on ENT Condition")
-    fig=px.histogram(data, x=select, color='ENT_condition', barmode='group')
-    st.plotly_chart(fig)
-    st.sidebar.markdown("###  Details regarding ENT Condition for specific School")
-    if not st.sidebar.checkbox("Hide", True,key=32):
-        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='33')
-        select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='34')
-        st.markdown("### Details regarding ENT condition with respect to specific data")
-        d3=data[data[' School ID']==select1]
-        fig=px.histogram(d3,x=select, color='ENT_condition', barmode='group')
+    school_count = data['ENT_condition'].value_counts()
+    school_count = pd.DataFrame({'ENT_condition':school_count.index, 'Number of Students':school_count.values})
+    if selectm == 'Bar plot':
+        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='23')
+        st.markdown("### Histogram based on ENT Condition")
+        fig=px.histogram(data, x=select, color='ENT_condition', barmode='group')
+        st.plotly_chart(fig)
+        st.sidebar.markdown("###  Details regarding ENT Condition for specific School")
+        if not st.sidebar.checkbox("Hide", True,key=32):
+            select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='33')
+            select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='34')
+            st.markdown("### Details regarding ENT condition with respect to specific data")
+            d3=data[data[' School ID']==select1]
+            fig=px.histogram(d3,x=select, color='ENT_condition', barmode='group')
+            st.plotly_chart(fig)
+    else:
+        fig = px.pie(school_count, values='Number of Students', names='ENT_condition' )
         st.plotly_chart(fig)
 
 st.sidebar.markdown("###  Details regarding Total Health Condition")
 if not st.sidebar.checkbox("Hide", True,key=24):
-    select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID','bp_condition','height_condition', 'bmi_condition'], key='25')
+    data[['Right_Eye_Power','Left_Eye_Power']] = data[['Right_Eye_Power','Left_Eye_Power']].fillna(value=0)
+    data['eye_condition']=data[['Right_Eye_Power','Left_Eye_Power']].apply(eye_con,axis=1)
+    data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']] = data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']].fillna(value=0)
+    data['Teeth_condition']=data[['Caries', 'Discoloration', 'Healthy_Gums', 'Malocclusion','Oral_Hygine', 'TeethWellFormed']].apply(teeth_con,axis=1)
+    data[['ENT_Issue']] = data[['ENT_Issue']].fillna(value=0)
+    data['ENT_condition']=data[['ENT_Issue']].apply(ent_con,axis=1)
+    selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='64')
     data['Health_condition']=data[['eye_condition', 'Teeth_condition','ENT_condition']].apply(health_con,axis=1)
-    st.markdown("### Histogram based on Overall Health Condition")
-    fig=px.histogram(data, x=select, color='Health_condition', barmode='group')
-    st.plotly_chart(fig)
-    st.sidebar.markdown("###  Details regarding Health Condition for specific School")
-    if not st.sidebar.checkbox("Hide", True,key=35):
-        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='36')
-        select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='37')
-        st.markdown("### Details regarding Health condition with respect to specific data")
-        d4=data[data[' School ID']==select1]
-        fig=px.histogram(d4,x=select, color='Health_condition', barmode='group')
+    school_count = data['Health_condition'].value_counts()
+    school_count = pd.DataFrame({'Health_condition':school_count.index, 'Number of Students':school_count.values})
+    if selectm == 'Bar plot':
+        select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID','bp_condition','height_condition', 'bmi_condition'], key='25')
+        st.markdown("### Histogram based on Overall Health Condition")
+        fig=px.histogram(data, x=select, color='Health_condition', barmode='group')
+        st.plotly_chart(fig)
+        st.sidebar.markdown("###  Details regarding Health Condition for specific School")
+        if not st.sidebar.checkbox("Hide", True,key=35):
+            select = st.sidebar.selectbox('Visualization based on', ['Sex','Class','Blood Group',' School ID'], key='36')
+            select1 = st.sidebar.selectbox('Visualization with respect to',list(data[' School ID'].unique()),key='37')
+            st.markdown("### Details regarding Health condition with respect to specific data")
+            d4=data[data[' School ID']==select1]
+            fig=px.histogram(d4,x=select, color='Health_condition', barmode='group')
+            st.plotly_chart(fig)
+    else:
+        fig = px.pie(school_count, values='Number of Students', names='Health_condition' )
         st.plotly_chart(fig)
 
 st.sidebar.markdown("-----------------------------------------------")
