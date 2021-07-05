@@ -347,12 +347,12 @@ if not st.sidebar.checkbox("Hide", True,key=3):
 st.sidebar.markdown("###  General Count plots for Teeth related Issues ")
 if not st.sidebar.checkbox("Hide", True,key=4):
     selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='58')
-    select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Age in yrs'],key='8')
     select = st.sidebar.selectbox('Visualization based on', ['Caries','Discoloration','Healthy_Gums','Malocclusion','Oral_Hygine','TeethWellFormed','Serious_Dental_Issue','Dentist_Recommendation'], key='3')
     school_count = data[select].value_counts()
     school_count = pd.DataFrame({select:school_count.index, 'Number of Students':school_count.values})
     m_data = data.fillna('NA')
     if selectm == 'Bar plot':
+        select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Age in yrs'],key='8')
         st.markdown("###  General Count plots for Teeth related Issues ")
         fig=px.histogram(m_data, x=select1, color=select, barmode='group')
         st.plotly_chart(fig)
@@ -365,12 +365,12 @@ if not st.sidebar.checkbox("Hide", True,key=4):
 st.sidebar.markdown("###  General Count plots for ENT related Issues  ")
 if not st.sidebar.checkbox("Hide", True,key=5):
     selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='59')
-    select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Age in yrs'],key='9')
     select = st.sidebar.selectbox('Visualization based on', ['LEFT_EAR','RIGHT_EAR','ENT_Issue','Eye_Issue','ENT_Issue_Detail','Eye_Issue_Detail','Wears_Glass'], key='4')
     school_count = data[select].value_counts()
     school_count = pd.DataFrame({select:school_count.index, 'Number of Students':school_count.values})
     m_data = data.fillna('NA')
     if selectm == 'Bar plot':
+        select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Age in yrs'],key='9')
         st.markdown("###  General Count plots for ENT related Issues ")
         fig=px.histogram(m_data, x=select1, color=select, barmode='group')
         st.plotly_chart(fig)
@@ -382,12 +382,12 @@ if not st.sidebar.checkbox("Hide", True,key=5):
 st.sidebar.markdown("###  General Count plots for acuity ")
 if not st.sidebar.checkbox("Hide", True,key=6):
     selectm = st.sidebar.selectbox('Visualization type', ['Bar plot', 'Pie chart'], key='60')
-    select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Sex'],key='5')
     select = st.sidebar.selectbox('Visualization based on', ['Left_Eye_Power','Right_Eye_Power','Left_Eye_Pwr_WthGlass','Right_Eye_Pwr_WthGlass'], key='6')
     school_count = data[select].value_counts()
     school_count = pd.DataFrame({select:school_count.index, 'Number of Students':school_count.values})
     m_data = data.fillna('NA')
     if selectm == 'Bar plot':
+        select1 = st.sidebar.selectbox('Visualization with respect to',[' School ID','Sex'],key='5')
         st.markdown("###  General Count plots for acuity")
         fig=px.histogram(m_data, x=select1, color=select, barmode='group')
         st.plotly_chart(fig)
