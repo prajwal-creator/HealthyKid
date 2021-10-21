@@ -206,13 +206,13 @@ def bmi_con(cols):
         return "NA"  
     if (BMI<=b1):
         return "Under-weight"
-    elif(BMI>b1 and BMI<b2):
+    elif(BMI>b1 and BMI<=b2):
         return "Borderline"
     elif(BMI>b2 and BMI<b3):
         return "Normal"
-    elif(BMI>b3 and BMI<b4):
+    elif(BMI>=b3 and BMI<b4):
         return "Over-weight"
-    elif(BMI>b4):
+    elif(BMI>=b4):
         return "Obese"
     else:
         return "NA"
